@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 
 export default function Login() {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -20,15 +20,17 @@ export default function Login() {
     setLoading(true);
     setError('');
 
-    if (!email || !password) {
+    if (!username || !password) {
       setError('Please fill in all fields');
       setLoading(false);
       return;
     }
 
     try {
+      // For now, we'll use username as email for authentication
+      // In a production app, you'd want to look up the email from username
       const { data, error: authError } = await supabase.auth.signInWithPassword({
-        email,
+        email: username,
         password,
       });
 
@@ -88,16 +90,16 @@ export default function Login() {
           )}
 
           <div className="login-field">
-            <label htmlFor="email" className="login-label">
-              Email Address
+            <label htmlFor="username" className="login-label">
+              Username/Email
             </label>
             <input
-              id="email"
+              id="username"
               type="email"
               className="login-input"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Enter your username or email"
               required
               autoComplete="email"
               disabled={loading}

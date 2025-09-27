@@ -4,11 +4,9 @@ import { supabase } from '../lib/supabaseClient';
 
 export default function Register() {
   const [formData, setFormData] = useState({
-    email: '',
+    username: '',
     password: '',
-    confirmPassword: '',
-    firstName: '',
-    lastName: ''
+    confirmPassword: ''
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -30,8 +28,7 @@ export default function Register() {
   };
 
   const validateForm = () => {
-    if (!formData.email || !formData.password || !formData.confirmPassword ||
-        !formData.firstName || !formData.lastName) {
+    if (!formData.username || !formData.password || !formData.confirmPassword) {
       setError('Please fill in all fields');
       return false;
     }
@@ -63,13 +60,12 @@ export default function Register() {
     try {
       // Register the user with Supabase Auth
       const { data, error: authError } = await supabase.auth.signUp({
-        email: formData.email,
+        email: formData.username,
         password: formData.password,
         options: {
           data: {
-            first_name: formData.firstName,
-            last_name: formData.lastName,
-            full_name: `${formData.firstName} ${formData.lastName}`
+            username: formData.username,
+            display_name: formData.username
           }
         }
       });
@@ -112,61 +108,27 @@ export default function Register() {
             </div>
           )}
 
-          <div className="register-row">
-            <div className="register-field">
-              <label htmlFor="firstName" className="register-label">
-                First Name
-              </label>
-              <input
-                id="firstName"
-                name="firstName"
-                type="text"
-                className="register-input"
-                value={formData.firstName}
-                onChange={handleInputChange}
-                placeholder="Enter your first name"
-                required
-                autoComplete="given-name"
-                disabled={loading}
-              />
-            </div>
-
-            <div className="register-field">
-              <label htmlFor="lastName" className="register-label">
-                Last Name
-              </label>
-              <input
-                id="lastName"
-                name="lastName"
-                type="text"
-                className="register-input"
-                value={formData.lastName}
-                onChange={handleInputChange}
-                placeholder="Enter your last name"
-                required
-                autoComplete="family-name"
-                disabled={loading}
-              />
-            </div>
-          </div>
-
           <div className="register-field">
-            <label htmlFor="email" className="register-label">
-              Email Address
+            <label htmlFor="username" className="register-label">
+              Username
             </label>
             <input
-              id="email"
-              name="email"
+              id="username"
+              name="username"
               type="email"
               className="register-input"
-              value={formData.email}
+              value={formData.username}
               onChange={handleInputChange}
-              placeholder="Enter your email"
+              placeholder="Enter your email address"
               required
               autoComplete="email"
               disabled={loading}
             />
+            <small className="register-help-text">
+              Use your email address as your username
+            </small>
           </div>
+
 
 
           <div className="register-field">
