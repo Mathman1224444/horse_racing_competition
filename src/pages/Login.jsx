@@ -46,28 +46,6 @@ export default function Login() {
     }
   };
 
-  const handleDemoLogin = async () => {
-    setLoading(true);
-    setError('');
-
-    try {
-      // Demo login with pre-configured credentials
-      const { data, error: authError } = await supabase.auth.signInWithPassword({
-        email: 'demo@horsebetting.com',
-        password: 'demo123',
-      });
-
-      if (authError) {
-        setError('Demo login not available');
-      } else if (data.user) {
-        navigate(from, { replace: true });
-      }
-    } catch {
-      setError('Demo login failed');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="login-page">
@@ -149,15 +127,6 @@ export default function Login() {
               disabled={loading}
             >
               {loading ? 'Signing in...' : 'Sign In'}
-            </button>
-
-            <button
-              type="button"
-              className="login-button login-button--demo"
-              onClick={handleDemoLogin}
-              disabled={loading}
-            >
-              Demo Login
             </button>
           </div>
         </form>
