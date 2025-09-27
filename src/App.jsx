@@ -6,21 +6,49 @@ import './styles.css';
 
 export default function App() {
   const [user, setUser] = useState(null);
+  const [appUser, setAppUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const location = useLocation();
 
+  const loadAppUser = async (authUser) => {
+    if (!authUser) {
+      setAppUser(null);
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('app_users')
+        .select('*')
+        .eq('auth_user_id', authUser.id)
+        .single();
+
+      if (error) {
+        console.error('Error loading app user:', error);
+        setAppUser(null);
+      } else {
+        setAppUser(data);
+      }
+    } catch (err) {
+      console.error('Error loading app user:', err);
+      setAppUser(null);
+    }
+  };
+
   useEffect(() => {
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setUser(session?.user ?? null);
+      await loadAppUser(session?.user);
       setLoading(false);
     });
 
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setUser(session?.user ?? null);
+      await loadAppUser(session?.user);
       setLoading(false);
     });
 
@@ -45,12 +73,12 @@ export default function App() {
     <div className="app">
       {!hideNavbar && (
         <header className="app__header">
-          <NavBar user={user} />
+          <NavBar user={user} appUser={appUser} />
         </header>
       )}
 
       <main className="app__main">
-        <Outlet context={{ user, setUser }} />
+        <Outlet context={{ user, appUser, setUser, setAppUser }} />
       </main>
 
       {!hideNavbar && (

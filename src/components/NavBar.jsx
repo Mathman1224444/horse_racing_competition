@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 
-export default function NavBar({ user }) {
+export default function NavBar({ user, appUser }) {
   const handleLogout = async () => {
     await supabase.auth.signOut();
   };
@@ -18,7 +18,7 @@ export default function NavBar({ user }) {
         <Link to="/dashboard">Dashboard</Link>
         <Link to="/events">Events</Link>
         <Link to="/races">Races</Link>
-        {user?.user_metadata?.role === 'commissioner' && (
+        {appUser?.is_commissioner && (
           <Link to="/commissioner">Commissioner</Link>
         )}
       </div>

@@ -3,7 +3,7 @@ import { useOutletContext, Navigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 
 export default function CommissionerPage() {
-  const { user } = useOutletContext();
+  const { user, appUser } = useOutletContext();
   const [activeTab, setActiveTab] = useState('events');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -36,7 +36,7 @@ export default function CommissionerPage() {
   const [finishingOrder, setFinishingOrder] = useState([]);
 
   // Check if user is Commissioner
-  const isCommissioner = user?.user_metadata?.role === 'commissioner';
+  const isCommissioner = appUser?.is_commissioner || false;
 
   useEffect(() => {
     if (isCommissioner) {

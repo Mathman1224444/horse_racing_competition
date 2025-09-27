@@ -6,7 +6,7 @@ import { evaluateBet } from '../lib/betEvaluator';
 
 export default function RacePage() {
   const { raceId } = useParams();
-  const { user } = useOutletContext();
+  const { user, appUser } = useOutletContext();
   const navigate = useNavigate();
   const [race, setRace] = useState(null);
   const [horses, setHorses] = useState([]);
@@ -32,7 +32,7 @@ export default function RacePage() {
       // User is already available from context
 
       // Check if user is Commissioner
-      if (user?.user_metadata?.role === 'commissioner') {
+      if (appUser?.is_commissioner) {
         setIsCommissioner(true);
       }
 
