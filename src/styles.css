@@ -782,6 +782,7 @@ input:focus {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  text-align: center;
 }
 
 .app__header {
@@ -839,4 +840,71 @@ input:focus {
   .app__main > * {
     max-width: 100%;
   }
+}
+
+/* Text Centering Styles */
+h1, h2, h3, h4, h5, h6 {
+  text-align: center;
+}
+
+p {
+  text-align: center;
+}
+
+/* Navigation and forms should remain left-aligned for usability */
+nav,
+nav ul,
+nav li,
+form,
+.login-form,
+.register-form,
+input,
+label,
+.footer-content,
+.footer-section {
+  text-align: left;
+}
+
+/* Exception for form field labels and help text */
+.login-label,
+.register-label,
+.login-help-text,
+.register-help-text {
+  text-align: left;
+}
+
+/* Center form titles and headers */
+.login-header,
+.register-header,
+.login-title,
+.register-title,
+.login-subtitle,
+.register-subtitle {
+  text-align: center;
+}
+
+/* Center dashboard elements */
+.dashboard__welcome,
+.dashboard__section-header,
+.dashboard__empty {
+  text-align: center;
+}
+
+/* Center event cards content */
+.dashboard__event-card,
+.dashboard__event-info {
+  text-align: center;
+}
+
+/* Center bet cards */
+.dashboard__bet-card,
+.dashboard__bet-info {
+  text-align: center;
+}
+
+/* Center error messages */
+.login-error,
+.register-error,
+.dashboard-loading {
+  text-align: center;
 }

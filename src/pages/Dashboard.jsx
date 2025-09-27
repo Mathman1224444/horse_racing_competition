@@ -1,23 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link, useOutletContext } from 'react-router-dom';
-import RaceCard from '../components/RaceCard';
 import { supabase } from '../lib/supabaseClient';
 
 export default function Dashboard() {
   const { user } = useOutletContext();
-  const [localUser, setLocalUser] = useState(user);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [recentBets, setRecentBets] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadDashboardData();
-  }, []);
-
-  const loadDashboardData = async () => {
+  const loadDashboardData = useCallback(async () => {
     try {
       // Use user from context
-      const currentUser = user || localUser;
+      const currentUser = user;
 
       // Load upcoming events
       const { data: events } = await supabase
@@ -45,7 +39,11 @@ export default function Dashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    loadDashboardData();
+  }, [loadDashboardData]);
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-US', {
