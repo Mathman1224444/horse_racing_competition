@@ -35,19 +35,10 @@ export default function CommissionerPage() {
   const [raceHorses, setRaceHorses] = useState([]);
   const [finishingOrder, setFinishingOrder] = useState([]);
 
-  // Check if user is Commissioner
-  const isCommissioner = appUser?.is_commissioner || false;
-
   useEffect(() => {
-    if (isCommissioner) {
-      loadEvents();
-      loadRaces();
-    }
-  }, [isCommissioner]);
-
-  if (!isCommissioner) {
-    return <Navigate to="/dashboard" replace />;
-  }
+    loadEvents();
+    loadRaces();
+  }, []);
 
   const loadEvents = async () => {
     try {
@@ -224,8 +215,8 @@ export default function CommissionerPage() {
   return (
     <div className="commissioner-page">
       <div className="commissioner-page__header">
-        <h1>Commissioner Dashboard</h1>
-        <p>Administrative controls for event and race management</p>
+        <h1>Event & Race Management</h1>
+        <p>Create events, manage races, and set race results</p>
       </div>
 
       {error && (

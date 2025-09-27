@@ -14,7 +14,7 @@ export default function RacePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('details');
-  const [isCommissioner, setIsCommissioner] = useState(false);
+  const [showManagement, setShowManagement] = useState(true);
   const [managementMode, setManagementMode] = useState(false);
   const [scratchedHorses, setScratchedHorses] = useState(new Set());
 
@@ -31,10 +31,7 @@ export default function RacePage() {
 
       // User is already available from context
 
-      // Check if user is Commissioner
-      if (appUser?.is_commissioner) {
-        setIsCommissioner(true);
-      }
+      // Management features available to all users
 
       // Load race details with event info and race number calculation
       const { data: raceData, error: raceError } = await supabase
@@ -175,7 +172,6 @@ export default function RacePage() {
   };
 
   const handleHorseScratch = async (horseId, scratched) => {
-    if (!isCommissioner) return;
 
     try {
       const { error } = await supabase
@@ -335,16 +331,14 @@ export default function RacePage() {
               Place Bet
             </button>
           )}
-          {isCommissioner && (
-            <button
-              className={`race-page__tab ${
-                activeTab === 'management' ? 'race-page__tab--active' : ''
-              }`}
-              onClick={() => setActiveTab('management')}
-            >
-              Race Management
-            </button>
-          )}
+          <button
+            className={`race-page__tab ${
+              activeTab === 'management' ? 'race-page__tab--active' : ''
+            }`}
+            onClick={() => setActiveTab('management')}
+          >
+            Race Management
+          </button>
           {user && bets.length > 0 && (
             <button
               className={`race-page__tab ${
@@ -506,7 +500,7 @@ export default function RacePage() {
             </div>
           )}
 
-          {activeTab === 'management' && isCommissioner && (
+          {activeTab === 'management' && (
             <div className="race-page__management-content">
               <h3>Race Management</h3>
               <div className="race-page__management-section">

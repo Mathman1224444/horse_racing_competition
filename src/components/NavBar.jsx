@@ -18,9 +18,7 @@ export default function NavBar({ user, appUser }) {
         <Link to="/dashboard">Dashboard</Link>
         <Link to="/events">Events</Link>
         <Link to="/races">Races</Link>
-        {appUser?.is_commissioner && (
-          <Link to="/commissioner">Commissioner</Link>
-        )}
+        <Link to="/commissioner">Management</Link>
       </div>
 
       <div className="nav-actions">
