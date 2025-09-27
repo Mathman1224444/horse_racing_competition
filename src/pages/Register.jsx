@@ -8,8 +8,7 @@ export default function Register() {
     password: '',
     confirmPassword: '',
     firstName: '',
-    lastName: '',
-    dateOfBirth: ''
+    lastName: ''
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -32,7 +31,7 @@ export default function Register() {
 
   const validateForm = () => {
     if (!formData.email || !formData.password || !formData.confirmPassword ||
-        !formData.firstName || !formData.lastName || !formData.dateOfBirth) {
+        !formData.firstName || !formData.lastName) {
       setError('Please fill in all fields');
       return false;
     }
@@ -47,20 +46,6 @@ export default function Register() {
       return false;
     }
 
-    // Age verification - must be 18+
-    const birthDate = new Date(formData.dateOfBirth);
-    const today = new Date();
-    const age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
-    }
-
-    if (age < 18) {
-      setError('You must be at least 18 years old to register');
-      return false;
-    }
 
     return true;
   };
@@ -84,7 +69,6 @@ export default function Register() {
           data: {
             first_name: formData.firstName,
             last_name: formData.lastName,
-            date_of_birth: formData.dateOfBirth,
             full_name: `${formData.firstName} ${formData.lastName}`
           }
         }
@@ -184,24 +168,6 @@ export default function Register() {
             />
           </div>
 
-          <div className="register-field">
-            <label htmlFor="dateOfBirth" className="register-label">
-              Date of Birth
-            </label>
-            <input
-              id="dateOfBirth"
-              name="dateOfBirth"
-              type="date"
-              className="register-input"
-              value={formData.dateOfBirth}
-              onChange={handleInputChange}
-              required
-              disabled={loading}
-            />
-            <small className="register-help-text">
-              You must be 18 or older to register
-            </small>
-          </div>
 
           <div className="register-field">
             <label htmlFor="password" className="register-label">
@@ -276,12 +242,6 @@ export default function Register() {
                 <Link to="/privacy" className="register-terms-link">
                   Privacy Policy
                 </Link>
-              </span>
-            </label>
-            <label className="register-terms-checkbox">
-              <input type="checkbox" required />
-              <span>
-                I confirm that I am 18 years of age or older
               </span>
             </label>
           </div>
