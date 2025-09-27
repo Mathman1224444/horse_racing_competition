@@ -71,36 +71,10 @@ export default function App() {
               </ul>
             </div>
 
-            <div className="footer-section">
-              <h4>Support</h4>
-              <ul>
-                <li><a href="/help">Help Center</a></li>
-                <li><a href="/contact">Contact Us</a></li>
-                <li><a href="/rules">Betting Rules</a></li>
-                <li><a href="/responsible-gaming">Responsible Gaming</a></li>
-              </ul>
-            </div>
-
-            <div className="footer-section">
-              <h4>Legal</h4>
-              <ul>
-                <li><a href="/terms">Terms of Service</a></li>
-                <li><a href="/privacy">Privacy Policy</a></li>
-                <li><a href="/age-verification">Age Verification</a></li>
-              </ul>
-            </div>
           </div>
 
           <div className="footer-bottom">
             <div className="footer-bottom-content">
-              <p>&copy; 2024 Horse Betting Platform. All rights reserved.</p>
-              <div className="footer-disclaimers">
-                <span>18+ Only</span>
-                <span>•</span>
-                <span>Gamble Responsibly</span>
-                <span>•</span>
-                <span>Licensed & Regulated</span>
-              </div>
             </div>
           </div>
         </footer>
