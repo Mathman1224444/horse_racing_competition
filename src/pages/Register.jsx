@@ -74,6 +74,7 @@ export default function Register() {
         email: formData.email,
         password: formData.password,
         options: {
+          emailRedirectTo: undefined,
           data: {
             username: formData.username,
             display_name: formData.username
@@ -84,14 +85,8 @@ export default function Register() {
       if (authError) {
         setError(authError.message);
       } else if (data.user) {
-        // Check if email confirmation is required
-        if (data.user.email_confirmed_at) {
-          // User is confirmed, redirect to intended page
-          navigate(from, { replace: true });
-        } else {
-          // Email confirmation required
-          setError('Please check your email and click the confirmation link to complete registration');
-        }
+        // Registration successful, redirect immediately without email verification
+        navigate(from, { replace: true });
       }
     } catch (err) {
       setError('An unexpected error occurred. Please try again.');
@@ -224,21 +219,6 @@ export default function Register() {
             </div>
           </div>
 
-          <div className="register-terms">
-            <label className="register-terms-checkbox">
-              <input type="checkbox" required />
-              <span>
-                I agree to the{' '}
-                <Link to="/terms" className="register-terms-link">
-                  Terms of Service
-                </Link>{' '}
-                and{' '}
-                <Link to="/privacy" className="register-terms-link">
-                  Privacy Policy
-                </Link>
-              </span>
-            </label>
-          </div>
 
           <div className="register-actions">
             <button
