@@ -8,6 +8,7 @@ import Register from './pages/Register.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import EventPage from './pages/EventPage.jsx';
 import RacePage from './pages/RacePage.jsx';
+import CommissionerPage from './pages/CommissionerPage.jsx';
 import NotFound from './pages/NotFound.jsx';
 import ErrorPage from './pages/ErrorPage.jsx';
 
@@ -20,7 +21,7 @@ export const router = createBrowserRouter([
       // Root redirect
       {
         index: true,
-        element: <Navigate to="/dashboard" replace />
+        element: <Navigate to="/events" replace />
       },
 
       // Public routes
@@ -105,6 +106,16 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <div>User Bets History Page</div>
+          </ProtectedRoute>
+        )
+      },
+
+      // Commissioner routes
+      {
+        path: 'commissioner',
+        element: (
+          <ProtectedRoute>
+            <CommissionerPage />
           </ProtectedRoute>
         )
       },

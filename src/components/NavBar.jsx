@@ -18,6 +18,9 @@ export default function NavBar({ user }) {
         <Link to="/dashboard">Dashboard</Link>
         <Link to="/events">Events</Link>
         <Link to="/races">Races</Link>
+        {user?.user_metadata?.role === 'commissioner' && (
+          <Link to="/commissioner">Commissioner</Link>
+        )}
       </div>
 
       <div className="nav-actions">
