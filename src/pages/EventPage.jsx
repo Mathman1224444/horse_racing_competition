@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link, useOutletContext } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import RaceCard from '../components/RaceCard';
 import { supabase } from '../lib/supabaseClient';
 
@@ -14,7 +14,7 @@ export default function EventPage() {
     if (eventId) {
       loadEventData();
     }
-  }, [eventId]);
+  }, [eventId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadEventData = async () => {
     try {
@@ -63,24 +63,16 @@ export default function EventPage() {
     });
   };
 
-  const formatTime = (dateString) => {
-    return new Date(dateString).toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
-    });
-  };
 
   const getEventStatus = () => {
-    if (!event?.start_date) return 'pending';
+    if (!event?.event_date) return 'pending';
 
     const now = new Date();
-    const startDate = new Date(event.start_date);
-    const endDate = new Date(event.end_date || event.start_date);
+    const eventDate = new Date(event.event_date);
 
-    if (now < startDate) return 'upcoming';
-    if (now > endDate) return 'completed';
-    return 'active';
+    if (now < eventDate) return 'upcoming';
+    if (now.toDateString() === eventDate.toDateString()) return 'active';
+    return 'completed';
   };
 
   const groupRacesByDate = (races) => {
@@ -160,15 +152,8 @@ export default function EventPage() {
 
             <div className="event-page__dates">
               <div className="event-page__date">
-                <strong>Start:</strong> {formatDate(event.start_date)}
-                {event.start_time && ` at ${formatTime(event.start_time)}`}
+                <strong>Date:</strong> {formatDate(event.event_date)}
               </div>
-              {event.end_date && event.end_date !== event.start_date && (
-                <div className="event-page__date">
-                  <strong>End:</strong> {formatDate(event.end_date)}
-                  {event.end_time && ` at ${formatTime(event.end_time)}`}
-                </div>
-              )}
             </div>
 
             {event.description && (

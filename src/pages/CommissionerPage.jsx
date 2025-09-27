@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useOutletContext, Navigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 
 export default function CommissionerPage() {
-  const { user, appUser } = useOutletContext();
   const [activeTab, setActiveTab] = useState('events');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -126,7 +124,7 @@ export default function CommissionerPage() {
     setError('');
 
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('races')
         .insert([{
           name: newRace.name,
@@ -138,9 +136,7 @@ export default function CommissionerPage() {
           race_type: newRace.race_type,
           surface: newRace.surface,
           status: 'upcoming'
-        }])
-        .select()
-        .single();
+        }]);
 
       if (error) throw error;
 

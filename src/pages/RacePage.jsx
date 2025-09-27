@@ -1,28 +1,24 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useParams, Link, useOutletContext, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useParams, Link, useOutletContext } from 'react-router-dom';
 import BetForm from '../components/BetForm';
 import { supabase } from '../lib/supabaseClient';
-import { evaluateBet } from '../lib/betEvaluator';
 
 export default function RacePage() {
   const { raceId } = useParams();
-  const { user, appUser } = useOutletContext();
-  const navigate = useNavigate();
+  const { user } = useOutletContext();
   const [race, setRace] = useState(null);
   const [horses, setHorses] = useState([]);
   const [bets, setBets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('details');
-  const [showManagement, setShowManagement] = useState(true);
-  const [managementMode, setManagementMode] = useState(false);
   const [scratchedHorses, setScratchedHorses] = useState(new Set());
 
   useEffect(() => {
     if (raceId) {
       loadRaceData();
     }
-  }, [raceId]);
+  }, [raceId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadRaceData = async () => {
     try {

@@ -19,12 +19,12 @@ export default function RaceCard({ race, showBettingButton = true }) {
   };
 
   const getRaceStatus = () => {
-    if (!race?.startTime) return 'pending';
+    if (!race?.start_time) return 'pending';
     const now = new Date();
-    const startTime = new Date(race.startTime);
+    const startTime = new Date(race.start_time);
 
     if (now < startTime) return 'upcoming';
-    if (race.isFinished) return 'finished';
+    if (race.status === 'finished') return 'finished';
     return 'running';
   };
 
@@ -44,7 +44,7 @@ export default function RaceCard({ race, showBettingButton = true }) {
       <div className="race-card__details">
         <div className="race-card__info">
           <p className="race-card__time">
-            <strong>Start Time:</strong> {formatTime(race?.startTime)}
+            <strong>Start Time:</strong> {formatTime(race?.start_time)}
           </p>
 
           {race?.track && (
@@ -59,15 +59,9 @@ export default function RaceCard({ race, showBettingButton = true }) {
             </p>
           )}
 
-          {race?.prizePool && (
+          {race?.prize_pool && (
             <p className="race-card__prize">
-              <strong>Prize Pool:</strong> {formatPrizePool(race.prizePool)}
-            </p>
-          )}
-
-          {race?.totalHorses && (
-            <p className="race-card__horses">
-              <strong>Horses:</strong> {race.totalHorses}
+              <strong>Prize Pool:</strong> {formatPrizePool(race.prize_pool)}
             </p>
           )}
         </div>

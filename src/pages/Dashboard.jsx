@@ -17,8 +17,8 @@ export default function Dashboard() {
       const { data: events } = await supabase
         .from('events')
         .select('*, races(count)')
-        .gte('start_date', new Date().toISOString())
-        .order('start_date', { ascending: true })
+        .gte('event_date', new Date().toISOString().split('T')[0])
+        .order('event_date', { ascending: true })
         .limit(6);
 
       setUpcomingEvents(events || []);
@@ -116,7 +116,7 @@ export default function Dashboard() {
                     </h3>
                     <p className="dashboard__event-description">{event.description}</p>
                     <p className="dashboard__event-date">
-                      {formatDate(event.start_date)}
+                      {formatDate(event.event_date)}
                     </p>
                     <p className="dashboard__event-races">
                       {event.races?.length || 0} races
