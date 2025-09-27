@@ -57,11 +57,6 @@ export default function App() {
         <footer className="app__footer">
           <div className="footer-content">
             <div className="footer-section">
-              <h4>Horse Betting Platform</h4>
-              <p>Your premier destination for horse race betting.</p>
-            </div>
-
-            <div className="footer-section">
               <h4>Quick Links</h4>
               <ul>
                 <li><a href="/dashboard">Dashboard</a></li>

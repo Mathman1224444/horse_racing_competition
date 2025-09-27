@@ -12,8 +12,8 @@ export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Get the intended destination or default to dashboard
-  const from = location.state?.from?.pathname || '/dashboard';
+  // Get the intended destination or default to events
+  const from = location.state?.from?.pathname || '/events';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,7 +35,7 @@ export default function Login() {
       if (authError) {
         setError(authError.message);
       } else if (data.user) {
-        // Redirect to intended page or dashboard
+        // Redirect to intended page or events
         navigate(from, { replace: true });
       }
     } catch (err) {

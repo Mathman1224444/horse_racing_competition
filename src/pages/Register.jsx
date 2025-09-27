@@ -17,8 +17,8 @@ export default function Register() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Get the intended destination or default to dashboard
-  const from = location.state?.from?.pathname || '/dashboard';
+  // Get the intended destination or default to events
+  const from = location.state?.from?.pathname || '/events';
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
