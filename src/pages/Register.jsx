@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabaseClient';
 
 export default function Register() {
   const [formData, setFormData] = useState({
+    email: '',
     username: '',
     password: '',
     confirmPassword: ''
@@ -28,7 +29,7 @@ export default function Register() {
   };
 
   const validateForm = () => {
-    if (!formData.username || !formData.password || !formData.confirmPassword) {
+    if (!formData.email || !formData.username || !formData.password || !formData.confirmPassword) {
       setError('Please fill in all fields');
       return false;
     }
@@ -43,6 +44,16 @@ export default function Register() {
       return false;
     }
 
+    // Basic username validation
+    if (formData.username.length < 3) {
+      setError('Username must be at least 3 characters long');
+      return false;
+    }
+
+    if (!/^[a-zA-Z0-9_]+$/.test(formData.username)) {
+      setError('Username can only contain letters, numbers, and underscores');
+      return false;
+    }
 
     return true;
   };
@@ -60,7 +71,7 @@ export default function Register() {
     try {
       // Register the user with Supabase Auth
       const { data, error: authError } = await supabase.auth.signUp({
-        email: formData.username,
+        email: formData.email,
         password: formData.password,
         options: {
           data: {
@@ -109,15 +120,15 @@ export default function Register() {
           )}
 
           <div className="register-field">
-            <label htmlFor="username" className="register-label">
-              Username
+            <label htmlFor="email" className="register-label">
+              Email Address
             </label>
             <input
-              id="username"
-              name="username"
+              id="email"
+              name="email"
               type="email"
               className="register-input"
-              value={formData.username}
+              value={formData.email}
               onChange={handleInputChange}
               placeholder="Enter your email address"
               required
@@ -125,7 +136,28 @@ export default function Register() {
               disabled={loading}
             />
             <small className="register-help-text">
-              Use your email address as your username
+              Used for login and account verification
+            </small>
+          </div>
+
+          <div className="register-field">
+            <label htmlFor="username" className="register-label">
+              Display Username
+            </label>
+            <input
+              id="username"
+              name="username"
+              type="text"
+              className="register-input"
+              value={formData.username}
+              onChange={handleInputChange}
+              placeholder="Choose a display name"
+              required
+              autoComplete="username"
+              disabled={loading}
+            />
+            <small className="register-help-text">
+              3+ characters, letters, numbers, and underscores only. Visible to other users.
             </small>
           </div>
 
