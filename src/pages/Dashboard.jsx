@@ -6,14 +6,8 @@ import { supabase } from '../lib/supabaseClient';
 export default function Dashboard() {
   const { user } = useOutletContext();
   const [localUser, setLocalUser] = useState(user);
-  const [upcomingRaces, setUpcomingRaces] = useState([]);
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [recentBets, setRecentBets] = useState([]);
-  const [stats, setStats] = useState({
-    totalBets: 0,
-    totalWagered: 0,
-    totalWinnings: 0,
-    winRate: 0
-  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -25,37 +19,26 @@ export default function Dashboard() {
       // Use user from context
       const currentUser = user || localUser;
 
-      // Load upcoming races
-      const { data: races } = await supabase
-        .from('races')
-        .select('*')
-        .gte('start_time', new Date().toISOString())
-        .order('start_time', { ascending: true })
+      // Load upcoming events
+      const { data: events } = await supabase
+        .from('events')
+        .select('*, races(count)')
+        .gte('start_date', new Date().toISOString())
+        .order('start_date', { ascending: true })
         .limit(6);
 
-      setUpcomingRaces(races || []);
+      setUpcomingEvents(events || []);
 
       // Load recent bets for user
       if (currentUser) {
         const { data: bets } = await supabase
           .from('bets')
-          .select('*, races(name, start_time)')
+          .select('*, races(name, start_time, events(name))')
           .eq('user_id', currentUser.id)
           .order('created_at', { ascending: false })
           .limit(5);
 
         setRecentBets(bets || []);
-
-        // Calculate stats
-        const { data: userStats } = await supabase
-          .from('user_stats')
-          .select('*')
-          .eq('user_id', currentUser.id)
-          .single();
-
-        if (userStats) {
-          setStats(userStats);
-        }
       }
     } catch (error) {
       console.error('Error loading dashboard data:', error);
@@ -92,13 +75,13 @@ export default function Dashboard() {
     <div className="dashboard">
       <div className="dashboard__header">
         <div className="dashboard__welcome">
-          <h1>Welcome back{user?.email ? `, ${user.email}` : ''}!</h1>
+          <h1>Welcome back{user?.user_metadata?.username ? `, ${user.user_metadata.username}` : ''}!</h1>
           <p>Ready to place some winning bets?</p>
         </div>
 
         <div className="dashboard__quick-actions">
-          <Link to="/races" className="dashboard__action-btn">
-            View All Races
+          <Link to="/events" className="dashboard__action-btn">
+            Browse Events
           </Link>
           <Link to="/account" className="dashboard__action-btn dashboard__action-btn--secondary">
             Account Settings
@@ -106,55 +89,47 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {user && (
-        <div className="dashboard__stats">
-          <div className="dashboard__stat-card">
-            <h3>Total Bets</h3>
-            <span className="dashboard__stat-value">{stats.totalBets}</span>
-          </div>
-          <div className="dashboard__stat-card">
-            <h3>Total Wagered</h3>
-            <span className="dashboard__stat-value">{formatCurrency(stats.totalWagered)}</span>
-          </div>
-          <div className="dashboard__stat-card">
-            <h3>Total Winnings</h3>
-            <span className="dashboard__stat-value dashboard__stat-value--positive">
-              {formatCurrency(stats.totalWinnings)}
-            </span>
-          </div>
-          <div className="dashboard__stat-card">
-            <h3>Win Rate</h3>
-            <span className="dashboard__stat-value">
-              {(stats.winRate * 100).toFixed(1)}%
-            </span>
-          </div>
-        </div>
-      )}
 
       <div className="dashboard__content">
         <div className="dashboard__section">
           <div className="dashboard__section-header">
-            <h2>Upcoming Races</h2>
-            <Link to="/races" className="dashboard__section-link">
+            <h2>Upcoming Events</h2>
+            <Link to="/events" className="dashboard__section-link">
               View All
             </Link>
           </div>
 
-          <div className="dashboard__races">
-            {upcomingRaces.length === 0 ? (
+          <div className="dashboard__events">
+            {upcomingEvents.length === 0 ? (
               <div className="dashboard__empty">
-                <p>No upcoming races scheduled.</p>
+                <p>No upcoming events scheduled.</p>
                 <Link to="/events" className="dashboard__empty-action">
                   Browse Events
                 </Link>
               </div>
             ) : (
-              upcomingRaces.map(race => (
-                <RaceCard
-                  key={race.id}
-                  race={race}
-                  showBettingButton={true}
-                />
+              upcomingEvents.map(event => (
+                <div key={event.id} className="dashboard__event-card">
+                  <div className="dashboard__event-info">
+                    <h3>
+                      <Link to={`/event/${event.id}`} className="dashboard__event-link">
+                        {event.name}
+                      </Link>
+                    </h3>
+                    <p className="dashboard__event-description">{event.description}</p>
+                    <p className="dashboard__event-date">
+                      {formatDate(event.start_date)}
+                    </p>
+                    <p className="dashboard__event-races">
+                      {event.races?.length || 0} races
+                    </p>
+                  </div>
+                  <div className="dashboard__event-actions">
+                    <Link to={`/event/${event.id}`} className="dashboard__event-btn">
+                      View Event
+                    </Link>
+                  </div>
+                </div>
               ))
             )}
           </div>
@@ -164,8 +139,8 @@ export default function Dashboard() {
           <div className="dashboard__section">
             <div className="dashboard__section-header">
               <h2>Recent Bets</h2>
-              <Link to="/bets" className="dashboard__section-link">
-                View All
+              <Link to="/events" className="dashboard__section-link">
+                View Events
               </Link>
             </div>
 
@@ -174,6 +149,9 @@ export default function Dashboard() {
                 <div key={bet.id} className="dashboard__bet-card">
                   <div className="dashboard__bet-info">
                     <h4>{bet.races?.name || 'Unknown Race'}</h4>
+                    <p className="dashboard__bet-event">
+                      Event: {bet.races?.events?.name || 'Unknown Event'}
+                    </p>
                     <p className="dashboard__bet-type">
                       {bet.bet_type.toUpperCase()} - {formatCurrency(bet.amount)}
                     </p>
