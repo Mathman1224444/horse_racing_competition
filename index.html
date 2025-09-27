@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Simple title -->
+    <title>Horse Betting MVP</title>
+
+    <!-- Basic favicon -->
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+
+    <!-- Theme color -->
+    <meta name="theme-color" content="#1a1a1a" />
+  </head>
+  <body>
+    <!-- Application Loading State -->
+    <div id="app-loading" style="
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-family: system-ui, -apple-system, sans-serif;
+      z-index: 9999;
+    ">
+      <div style="
+        text-align: center;
+        animation: fadeIn 0.5s ease-in;
+      ">
+        <div style="
+          width: 60px;
+          height: 60px;
+          border: 3px solid rgba(255, 255, 255, 0.3);
+          border-top: 3px solid #646cff;
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+          margin: 0 auto 20px;
+        "></div>
+        <h1 style="
+          margin: 0 0 10px 0;
+          font-size: 1.5rem;
+          font-weight: 600;
+        ">🐴 Horse Betting Platform</h1>
+        <p style="
+          margin: 0;
+          opacity: 0.7;
+          font-size: 0.9rem;
+        ">Loading your betting experience...</p>
+      </div>
+    </div>
+
+    <!-- No JavaScript Fallback -->
+    <noscript>
+      <div style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #f5f5f5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-family: system-ui, sans-serif;
+        z-index: 10000;
+      ">
+        <div>
+          <h1 style="color: #dc3545; margin-bottom: 16px;">
+            🚫 JavaScript Required
+          </h1>
+          <p style="color: #666; margin-bottom: 20px; max-width: 400px;">
+            Horse Betting Platform requires JavaScript to function properly.
+            Please enable JavaScript in your browser settings and reload the page.
+          </p>
+          <button onclick="window.location.reload()" style="
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+          ">
+            Reload Page
+          </button>
+        </div>
+      </div>
+    </noscript>
+
+    <!-- Main Application Root -->
+    <div id="root" role="main" aria-label="Horse Betting Platform Application"></div>
+
+    <!-- Application Scripts -->
+    <script type="module" src="/src/main.jsx"></script>
+
+    <!-- Hide loading screen once app starts -->
+    <script>
+      // Remove loading screen when React app initializes
+      window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+          const loading = document.getElementById('app-loading');
+          if (loading && document.querySelector('#root > *')) {
+            loading.style.opacity = '0';
+            setTimeout(() => loading.remove(), 300);
+          }
+        }, 100);
+      });
+    </script>
+
+    <!-- CSS Animations -->
+    <style>
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      /* Ensure the app fills the screen */
+      html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow-x: hidden;
+      }
+
+      #root {
+        min-height: 100vh;
+      }
+    </style>
+  </body>
+</html>

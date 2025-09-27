@@ -1,0 +1,778 @@
+/* Base Variables */
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Global Styles */
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+/* Typography */
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+/* Links */
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+
+a:hover {
+  color: #535bf2;
+}
+
+/* Buttons */
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+
+button:hover {
+  border-color: #646cff;
+}
+
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+/* Components */
+.race-card {
+  padding: 1rem;
+  margin: 0.5rem;
+  border: 1px solid #333;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.commissioner-panel {
+  padding: 1.5rem;
+  margin: 1rem;
+  border: 1px solid #444;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+nav {
+  padding: 1rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  margin-bottom: 1rem;
+}
+
+nav a {
+  margin-right: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: background-color 0.25s;
+}
+
+nav a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Forms */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+input {
+  padding: 0.6em 1.2em;
+  border: 1px solid #333;
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: inherit;
+  font-family: inherit;
+}
+
+input:focus {
+  outline: none;
+  border-color: #646cff;
+}
+
+/* Login Page Styles */
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2rem;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+}
+
+.login-container {
+  width: 100%;
+  max-width: 420px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.login-title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  color: #ffffff;
+}
+
+.login-subtitle {
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.login-error {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: rgba(220, 53, 69, 0.1);
+  border: 1px solid rgba(220, 53, 69, 0.3);
+  border-radius: 6px;
+  color: #ff6b6b;
+  font-size: 0.9rem;
+}
+
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.login-label {
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+}
+
+.login-input {
+  padding: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.login-input:focus {
+  outline: none;
+  border-color: #646cff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.login-password-container {
+  position: relative;
+}
+
+.login-password-toggle {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  padding: 0.25rem;
+  font-size: 1rem;
+}
+
+.login-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.login-remember {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+}
+
+.login-forgot {
+  color: #646cff;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.login-forgot:hover {
+  color: #535bf2;
+}
+
+.login-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.login-button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.login-button--primary {
+  background: #646cff;
+  color: white;
+}
+
+.login-button--primary:hover:not(:disabled) {
+  background: #535bf2;
+}
+
+.login-button--demo {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.login-button--demo:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.login-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.login-footer {
+  text-align: center;
+  margin-top: 2rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+}
+
+.login-register-link {
+  color: #646cff;
+  text-decoration: none;
+}
+
+.login-register-link:hover {
+  color: #535bf2;
+}
+
+.login-features {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.login-features h3 {
+  color: #ffffff;
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.login-features ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.login-features li {
+  color: rgba(255, 255, 255, 0.8);
+  padding: 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+/* Light Mode */
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+
+  a:hover {
+    color: #747bff;
+  }
+
+  button {
+    background-color: #f9f9f9;
+  }
+
+  .race-card {
+    border-color: #ddd;
+    background-color: rgba(0, 0, 0, 0.02);
+  }
+
+  .commissioner-panel {
+    border-color: #ccc;
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  nav {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  nav a:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  input {
+    border-color: #ddd;
+    background-color: rgba(0, 0, 0, 0.02);
+  }
+
+  /* Light mode login styles */
+  .login-page {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  }
+
+  .login-container {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+
+  .login-title {
+    color: #213547;
+  }
+
+  .login-subtitle {
+    color: rgba(33, 53, 71, 0.7);
+  }
+
+  .login-label {
+    color: rgba(33, 53, 71, 0.9);
+  }
+
+  .login-input {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.8);
+    color: #213547;
+  }
+
+  .login-input:focus {
+    background: rgba(255, 255, 255, 0.95);
+  }
+
+  .login-password-toggle {
+    color: rgba(33, 53, 71, 0.7);
+  }
+
+  .login-remember {
+    color: rgba(33, 53, 71, 0.8);
+  }
+
+  .login-button--demo {
+    background: rgba(0, 0, 0, 0.05);
+    color: rgba(33, 53, 71, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+  }
+
+  .login-button--demo:hover:not(:disabled) {
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  .login-footer {
+    color: rgba(33, 53, 71, 0.7);
+  }
+
+  .login-features {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .login-features h3 {
+    color: #213547;
+  }
+
+  .login-features li {
+    color: rgba(33, 53, 71, 0.8);
+  }
+}
+
+/* Register Page Styles */
+.register-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  padding: 2rem 1rem;
+}
+
+.register-container {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.register-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.register-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  background: linear-gradient(45deg, #646cff, #535bf2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.register-subtitle {
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.register-error {
+  padding: 1rem;
+  background: rgba(220, 38, 127, 0.1);
+  border: 1px solid rgba(220, 38, 127, 0.3);
+  border-radius: 8px;
+  color: #ff6b6b;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.register-error-icon {
+  font-size: 1.2rem;
+}
+
+.register-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.register-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.register-label {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+}
+
+.register-input {
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.register-input:focus {
+  outline: none;
+  border-color: #646cff;
+  box-shadow: 0 0 0 3px rgba(100, 108, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.register-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.register-password-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.register-password-toggle {
+  position: absolute;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: color 0.2s ease;
+}
+
+.register-password-toggle:hover {
+  color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.register-help-text {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+.register-terms {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+
+.register-terms-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+}
+
+.register-terms-checkbox input[type="checkbox"] {
+  margin: 0;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.register-terms-link {
+  color: #646cff;
+  text-decoration: underline;
+}
+
+.register-terms-link:hover {
+  color: #535bf2;
+}
+
+.register-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.register-button {
+  padding: 0.875rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.register-button--primary {
+  background: linear-gradient(45deg, #646cff, #535bf2);
+  color: white;
+}
+
+.register-button--primary:hover:not(:disabled) {
+  background: linear-gradient(45deg, #535bf2, #4338ca);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(100, 108, 255, 0.3);
+}
+
+.register-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.register-footer {
+  margin-top: 2rem;
+  text-align: center;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.register-footer p {
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+}
+
+.register-login-link {
+  color: #646cff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.register-login-link:hover {
+  color: #535bf2;
+  text-decoration: underline;
+}
+
+/* Responsive Design for Register Page */
+@media (prefers-color-scheme: light) {
+  .register-page {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  }
+
+  .register-container {
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+
+  .register-title {
+    background: linear-gradient(45deg, #646cff, #535bf2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .register-subtitle {
+    color: rgba(33, 53, 71, 0.7);
+  }
+
+  .register-label {
+    color: #213547;
+  }
+
+  .register-input {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.02);
+    color: #213547;
+  }
+
+  .register-input:focus {
+    border-color: #646cff;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(100, 108, 255, 0.1);
+  }
+
+  .register-input::placeholder {
+    color: rgba(33, 53, 71, 0.5);
+  }
+
+  .register-password-toggle {
+    color: rgba(33, 53, 71, 0.6);
+  }
+
+  .register-password-toggle:hover {
+    color: rgba(33, 53, 71, 0.8);
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  .register-help-text {
+    color: rgba(33, 53, 71, 0.6);
+  }
+
+  .register-terms {
+    background: rgba(0, 0, 0, 0.02);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .register-terms-checkbox {
+    color: rgba(33, 53, 71, 0.8);
+  }
+
+  .register-error {
+    background: rgba(220, 38, 127, 0.05);
+    border: 1px solid rgba(220, 38, 127, 0.2);
+    color: #dc2626;
+  }
+
+  .register-footer p {
+    color: rgba(33, 53, 71, 0.7);
+  }
+}
+
+@media (max-width: 640px) {
+  .register-page {
+    padding: 1rem 0.5rem;
+  }
+
+  .register-container {
+    padding: 2rem 1.5rem;
+    max-width: 100%;
+  }
+
+  .register-title {
+    font-size: 2rem;
+  }
+
+  .register-subtitle {
+    font-size: 1rem;
+  }
+
+  .register-row {
+    grid-template-columns: 1fr;
+  }
+
+  .register-label {
+    font-size: 0.85rem;
+  }
+
+  .register-input {
+    padding: 0.6rem 0.875rem;
+    font-size: 0.95rem;
+  }
+
+  .register-terms-checkbox {
+    font-size: 0.85rem;
+  }
+
+  .register-button {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.95rem;
+  }
+}

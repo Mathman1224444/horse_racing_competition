@@ -1,0 +1,311 @@
+import { useState } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { supabase } from '../lib/supabaseClient';
+
+export default function Register() {
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    confirmPassword: '',
+    firstName: '',
+    lastName: '',
+    dateOfBirth: ''
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Get the intended destination or default to dashboard
+  const from = location.state?.from?.pathname || '/dashboard';
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const validateForm = () => {
+    if (!formData.email || !formData.password || !formData.confirmPassword ||
+        !formData.firstName || !formData.lastName || !formData.dateOfBirth) {
+      setError('Please fill in all fields');
+      return false;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      return false;
+    }
+
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters long');
+      return false;
+    }
+
+    // Age verification - must be 18+
+    const birthDate = new Date(formData.dateOfBirth);
+    const today = new Date();
+    const age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+
+    if (age < 18) {
+      setError('You must be at least 18 years old to register');
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    if (!validateForm()) {
+      setLoading(false);
+      return;
+    }
+
+    try {
+      // Register the user with Supabase Auth
+      const { data, error: authError } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            first_name: formData.firstName,
+            last_name: formData.lastName,
+            date_of_birth: formData.dateOfBirth,
+            full_name: `${formData.firstName} ${formData.lastName}`
+          }
+        }
+      });
+
+      if (authError) {
+        setError(authError.message);
+      } else if (data.user) {
+        // Check if email confirmation is required
+        if (data.user.email_confirmed_at) {
+          // User is confirmed, redirect to intended page
+          navigate(from, { replace: true });
+        } else {
+          // Email confirmation required
+          setError('Please check your email and click the confirmation link to complete registration');
+        }
+      }
+    } catch (err) {
+      setError('An unexpected error occurred. Please try again.');
+      console.error('Registration error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="register-page">
+      <div className="register-container">
+        <div className="register-header">
+          <h1 className="register-title">Create Account</h1>
+          <p className="register-subtitle">
+            Join our horse betting platform today
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="register-form">
+          {error && (
+            <div className="register-error">
+              <span className="register-error-icon">⚠️</span>
+              {error}
+            </div>
+          )}
+
+          <div className="register-row">
+            <div className="register-field">
+              <label htmlFor="firstName" className="register-label">
+                First Name
+              </label>
+              <input
+                id="firstName"
+                name="firstName"
+                type="text"
+                className="register-input"
+                value={formData.firstName}
+                onChange={handleInputChange}
+                placeholder="Enter your first name"
+                required
+                autoComplete="given-name"
+                disabled={loading}
+              />
+            </div>
+
+            <div className="register-field">
+              <label htmlFor="lastName" className="register-label">
+                Last Name
+              </label>
+              <input
+                id="lastName"
+                name="lastName"
+                type="text"
+                className="register-input"
+                value={formData.lastName}
+                onChange={handleInputChange}
+                placeholder="Enter your last name"
+                required
+                autoComplete="family-name"
+                disabled={loading}
+              />
+            </div>
+          </div>
+
+          <div className="register-field">
+            <label htmlFor="email" className="register-label">
+              Email Address
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              className="register-input"
+              value={formData.email}
+              onChange={handleInputChange}
+              placeholder="Enter your email"
+              required
+              autoComplete="email"
+              disabled={loading}
+            />
+          </div>
+
+          <div className="register-field">
+            <label htmlFor="dateOfBirth" className="register-label">
+              Date of Birth
+            </label>
+            <input
+              id="dateOfBirth"
+              name="dateOfBirth"
+              type="date"
+              className="register-input"
+              value={formData.dateOfBirth}
+              onChange={handleInputChange}
+              required
+              disabled={loading}
+            />
+            <small className="register-help-text">
+              You must be 18 or older to register
+            </small>
+          </div>
+
+          <div className="register-field">
+            <label htmlFor="password" className="register-label">
+              Password
+            </label>
+            <div className="register-password-container">
+              <input
+                id="password"
+                name="password"
+                type={showPassword ? 'text' : 'password'}
+                className="register-input"
+                value={formData.password}
+                onChange={handleInputChange}
+                placeholder="Create a password"
+                required
+                autoComplete="new-password"
+                disabled={loading}
+              />
+              <button
+                type="button"
+                className="register-password-toggle"
+                onClick={() => setShowPassword(!showPassword)}
+                disabled={loading}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? '👁️' : '👁️‍🗨️'}
+              </button>
+            </div>
+            <small className="register-help-text">
+              Password must be at least 6 characters long
+            </small>
+          </div>
+
+          <div className="register-field">
+            <label htmlFor="confirmPassword" className="register-label">
+              Confirm Password
+            </label>
+            <div className="register-password-container">
+              <input
+                id="confirmPassword"
+                name="confirmPassword"
+                type={showConfirmPassword ? 'text' : 'password'}
+                className="register-input"
+                value={formData.confirmPassword}
+                onChange={handleInputChange}
+                placeholder="Confirm your password"
+                required
+                autoComplete="new-password"
+                disabled={loading}
+              />
+              <button
+                type="button"
+                className="register-password-toggle"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                disabled={loading}
+                aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+              >
+                {showConfirmPassword ? '👁️' : '👁️‍🗨️'}
+              </button>
+            </div>
+          </div>
+
+          <div className="register-terms">
+            <label className="register-terms-checkbox">
+              <input type="checkbox" required />
+              <span>
+                I agree to the{' '}
+                <Link to="/terms" className="register-terms-link">
+                  Terms of Service
+                </Link>{' '}
+                and{' '}
+                <Link to="/privacy" className="register-terms-link">
+                  Privacy Policy
+                </Link>
+              </span>
+            </label>
+            <label className="register-terms-checkbox">
+              <input type="checkbox" required />
+              <span>
+                I confirm that I am 18 years of age or older
+              </span>
+            </label>
+          </div>
+
+          <div className="register-actions">
+            <button
+              type="submit"
+              className="register-button register-button--primary"
+              disabled={loading}
+            >
+              {loading ? 'Creating Account...' : 'Create Account'}
+            </button>
+          </div>
+        </form>
+
+        <div className="register-footer">
+          <p>
+            Already have an account?{' '}
+            <Link to="/login" className="register-login-link">
+              Sign in here
+            </Link>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
