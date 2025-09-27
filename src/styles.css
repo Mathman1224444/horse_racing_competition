@@ -776,3 +776,67 @@ input:focus {
     font-size: 0.95rem;
   }
 }
+
+/* App Layout Styles - Center Content */
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app__header {
+  width: 100%;
+}
+
+.app__main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 2rem 1rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.app__main > * {
+  width: 100%;
+  max-width: 1200px;
+}
+
+.app__footer {
+  width: 100%;
+  margin-top: auto;
+}
+
+/* Dashboard Centered Layout */
+.dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Login/Register Centered Layout */
+.login-page,
+.register-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 160px);
+  padding: 2rem 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1240px) {
+  .app__main > * {
+    max-width: 95%;
+  }
+}
+
+@media (max-width: 768px) {
+  .app__main {
+    padding: 1rem 0.5rem;
+  }
+
+  .app__main > * {
+    max-width: 100%;
+  }
+}
