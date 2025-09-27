@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useParams, Link, useOutletContext } from 'react-router-dom';
+import { useState, useEffect, useCallback } from 'react';
+import { useParams, Link, useOutletContext, useNavigate } from 'react-router-dom';
 import BetForm from '../components/BetForm';
 import { supabase } from '../lib/supabaseClient';
 import { evaluateBet } from '../lib/betEvaluator';
@@ -7,12 +7,16 @@ import { evaluateBet } from '../lib/betEvaluator';
 export default function RacePage() {
   const { raceId } = useParams();
   const { user } = useOutletContext();
+  const navigate = useNavigate();
   const [race, setRace] = useState(null);
   const [horses, setHorses] = useState([]);
   const [bets, setBets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('details');
+  const [isCommissioner, setIsCommissioner] = useState(false);
+  const [managementMode, setManagementMode] = useState(false);
+  const [scratchedHorses, setScratchedHorses] = useState(new Set());
 
   useEffect(() => {
     if (raceId) {
@@ -27,7 +31,12 @@ export default function RacePage() {
 
       // User is already available from context
 
-      // Load race details
+      // Check if user is Commissioner
+      if (user?.user_metadata?.role === 'commissioner') {
+        setIsCommissioner(true);
+      }
+
+      // Load race details with event info and race number calculation
       const { data: raceData, error: raceError } = await supabase
         .from('races')
         .select('*, events(name)')
@@ -36,6 +45,20 @@ export default function RacePage() {
 
       if (raceError) {
         throw raceError;
+      }
+
+      // Calculate race number within the event
+      if (raceData.event_id) {
+        const { data: eventRaces, error: eventRacesError } = await supabase
+          .from('races')
+          .select('id, start_time')
+          .eq('event_id', raceData.event_id)
+          .order('start_time', { ascending: true });
+
+        if (!eventRacesError && eventRaces) {
+          const raceIndex = eventRaces.findIndex(r => r.id === raceData.id);
+          raceData.race_number = raceIndex + 1;
+        }
       }
 
       setRace(raceData);
@@ -52,6 +75,14 @@ export default function RacePage() {
       }
 
       setHorses(horsesData || []);
+
+      // Load scratched horses
+      if (horsesData && horsesData.length > 0) {
+        const scratchedIds = horsesData
+          .filter(horse => horse.scratched)
+          .map(horse => horse.id);
+        setScratchedHorses(new Set(scratchedIds));
+      }
 
       // Load user's bets for this race
       if (user) {
@@ -143,6 +174,36 @@ export default function RacePage() {
     return status === 'upcoming' && !race?.betting_closed;
   };
 
+  const handleHorseScratch = async (horseId, scratched) => {
+    if (!isCommissioner) return;
+
+    try {
+      const { error } = await supabase
+        .from('horses')
+        .update({ scratched })
+        .eq('id', horseId);
+
+      if (error) throw error;
+
+      // Update local state
+      setScratchedHorses(prev => {
+        const updated = new Set(prev);
+        if (scratched) {
+          updated.add(horseId);
+        } else {
+          updated.delete(horseId);
+        }
+        return updated;
+      });
+
+      // Reload race data to get updated horses
+      await loadRaceData();
+    } catch (err) {
+      console.error('Error updating horse scratch status:', err);
+      setError('Failed to update horse status. Please try again.');
+    }
+  };
+
   if (loading) {
     return (
       <div className="race-page-loading">
@@ -214,6 +275,11 @@ export default function RacePage() {
             </div>
 
             <div className="race-page__details">
+              {race.race_number && (
+                <div className="race-page__detail">
+                  <strong>Race Number:</strong> {race.race_number}
+                </div>
+              )}
               <div className="race-page__detail">
                 <strong>Start Time:</strong> {formatDateTime(race.start_time)}
               </div>
@@ -228,7 +294,7 @@ export default function RacePage() {
                 </div>
               )}
               <div className="race-page__detail">
-                <strong>Horses:</strong> {horses.length}
+                <strong>Horses:</strong> {horses.length} (Active: {horses.length - scratchedHorses.size})
               </div>
             </div>
 
@@ -267,6 +333,16 @@ export default function RacePage() {
               onClick={() => setActiveTab('betting')}
             >
               Place Bet
+            </button>
+          )}
+          {isCommissioner && (
+            <button
+              className={`race-page__tab ${
+                activeTab === 'management' ? 'race-page__tab--active' : ''
+              }`}
+              onClick={() => setActiveTab('management')}
+            >
+              Race Management
             </button>
           )}
           {user && bets.length > 0 && (
@@ -329,12 +405,22 @@ export default function RacePage() {
               <h3>Field ({horses.length} horses)</h3>
               <div className="race-page__horses-grid">
                 {horses.map(horse => (
-                  <div key={horse.id} className="race-page__horse-card">
+                  <div
+                    key={horse.id}
+                    className={`race-page__horse-card ${
+                      scratchedHorses.has(horse.id) ? 'race-page__horse-card--scratched' : ''
+                    }`}
+                  >
                     <div className="race-page__horse-number">
                       #{horse.program_number}
                     </div>
                     <div className="race-page__horse-info">
-                      <h4>{horse.name}</h4>
+                      <h4>
+                        {horse.name}
+                        {scratchedHorses.has(horse.id) && (
+                          <span className="race-page__scratch-indicator">(SCRATCHED)</span>
+                        )}
+                      </h4>
                       {horse.jockey && (
                         <p><strong>Jockey:</strong> {horse.jockey}</p>
                       )}
@@ -417,6 +503,50 @@ export default function RacePage() {
               ) : (
                 <p>Results not yet available.</p>
               )}
+            </div>
+          )}
+
+          {activeTab === 'management' && isCommissioner && (
+            <div className="race-page__management-content">
+              <h3>Race Management</h3>
+              <div className="race-page__management-section">
+                <h4>Horse Scratch Management</h4>
+                <p>Click on a horse to toggle its scratch status:</p>
+                <div className="race-page__management-horses">
+                  {horses.map(horse => (
+                    <div
+                      key={horse.id}
+                      className={`race-page__management-horse ${
+                        scratchedHorses.has(horse.id) ? 'race-page__management-horse--scratched' : ''
+                      }`}
+                    >
+                      <div className="race-page__management-horse-info">
+                        <span className="race-page__management-horse-number">
+                          #{horse.program_number}
+                        </span>
+                        <span className="race-page__management-horse-name">
+                          {horse.name}
+                        </span>
+                        {scratchedHorses.has(horse.id) && (
+                          <span className="race-page__management-scratch-badge">
+                            SCRATCHED
+                          </span>
+                        )}
+                      </div>
+                      <button
+                        className={`race-page__management-scratch-btn ${
+                          scratchedHorses.has(horse.id)
+                            ? 'race-page__management-scratch-btn--unscratch'
+                            : 'race-page__management-scratch-btn--scratch'
+                        }`}
+                        onClick={() => handleHorseScratch(horse.id, !scratchedHorses.has(horse.id))}
+                      >
+                        {scratchedHorses.has(horse.id) ? 'Unscratch' : 'Scratch'}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           )}
         </div>
