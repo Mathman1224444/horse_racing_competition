@@ -1,96 +1,63 @@
 import { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 
 export default function Register() {
-  const [formData, setFormData] = useState({
-    email: '',
-    username: '',
-    password: '',
-    confirmPassword: ''
-  });
+  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
   const navigate = useNavigate();
-  const location = useLocation();
-
-  // Get the intended destination or default to events
-  const from = location.state?.from?.pathname || '/events';
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const validateForm = () => {
-    if (!formData.email || !formData.username || !formData.password || !formData.confirmPassword) {
-      setError('Please fill in all fields');
-      return false;
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
-      return false;
-    }
-
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters long');
-      return false;
-    }
-
-    // Basic username validation
-    if (formData.username.length < 3) {
-      setError('Username must be at least 3 characters long');
-      return false;
-    }
-
-    if (!/^[a-zA-Z0-9_]+$/.test(formData.username)) {
-      setError('Username can only contain letters, numbers, and underscores');
-      return false;
-    }
-
-    return true;
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
-    if (!validateForm()) {
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      setLoading(false);
+      return;
+    }
+
+    if (username.length > 16) {
+      setError('Username must be 16 characters or less');
       setLoading(false);
       return;
     }
 
     try {
-      // Register the user with Supabase Auth
-      const { data, error: authError } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-        options: {
-          emailRedirectTo: undefined,
-          data: {
-            username: formData.username,
-            display_name: formData.username
-          }
-        }
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email,
+        password
       });
 
       if (authError) {
         setError(authError.message);
-      } else if (data.user) {
-        // Registration successful, redirect immediately without email verification
-        navigate(from, { replace: true });
+        setLoading(false);
+        return;
+      }
+
+      if (authData.user) {
+        const { error: profileError } = await supabase
+          .from('app_users')
+          .insert([{
+            auth_user_id: authData.user.id,
+            username: username,
+            slogan: '',
+            is_commissioner: false
+          }]);
+
+        if (profileError) {
+          setError('Error creating user profile: ' + profileError.message);
+        } else {
+          navigate('/events');
+        }
       }
     } catch (err) {
-      setError('An unexpected error occurred. Please try again.');
-      console.error('Registration error:', err);
+      setError('An unexpected error occurred');
     } finally {
       setLoading(false);
     }
@@ -99,144 +66,72 @@ export default function Register() {
   return (
     <div className="register-page">
       <div className="register-container">
-        <div className="register-header">
-          <h1 className="register-title">Create Account</h1>
-          <p className="register-subtitle">
-            Join our horse betting platform today
-          </p>
-        </div>
+        <h1>Register</h1>
+
+        {error && (
+          <div className="error-message">
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="register-form">
-          {error && (
-            <div className="register-error">
-              <span className="register-error-icon">⚠️</span>
-              {error}
-            </div>
-          )}
-
-          <div className="register-field">
-            <label htmlFor="email" className="register-label">
-              Email Address
-            </label>
+          <div className="form-group">
+            <label htmlFor="email">Email:</label>
             <input
-              id="email"
-              name="email"
               type="email"
-              className="register-input"
-              value={formData.email}
-              onChange={handleInputChange}
-              placeholder="Enter your email address"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
-              autoComplete="email"
               disabled={loading}
             />
-            <small className="register-help-text">
-              Used for login and account verification
-            </small>
           </div>
 
-          <div className="register-field">
-            <label htmlFor="username" className="register-label">
-              Display Username
-            </label>
+          <div className="form-group">
+            <label htmlFor="username">Username (max 16 characters):</label>
             <input
-              id="username"
-              name="username"
               type="text"
-              className="register-input"
-              value={formData.username}
-              onChange={handleInputChange}
-              placeholder="Choose a display name"
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              maxLength={16}
               required
-              autoComplete="username"
               disabled={loading}
             />
-            <small className="register-help-text">
-              3+ characters, letters, numbers, and underscores only. Visible to other users.
-            </small>
           </div>
 
-
-
-          <div className="register-field">
-            <label htmlFor="password" className="register-label">
-              Password
-            </label>
-            <div className="register-password-container">
-              <input
-                id="password"
-                name="password"
-                type={showPassword ? 'text' : 'password'}
-                className="register-input"
-                value={formData.password}
-                onChange={handleInputChange}
-                placeholder="Create a password"
-                required
-                autoComplete="new-password"
-                disabled={loading}
-              />
-              <button
-                type="button"
-                className="register-password-toggle"
-                onClick={() => setShowPassword(!showPassword)}
-                disabled={loading}
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
-              >
-                {showPassword ? '👁️' : '👁️‍🗨️'}
-              </button>
-            </div>
-            <small className="register-help-text">
-              Password must be at least 6 characters long
-            </small>
-          </div>
-
-          <div className="register-field">
-            <label htmlFor="confirmPassword" className="register-label">
-              Confirm Password
-            </label>
-            <div className="register-password-container">
-              <input
-                id="confirmPassword"
-                name="confirmPassword"
-                type={showConfirmPassword ? 'text' : 'password'}
-                className="register-input"
-                value={formData.confirmPassword}
-                onChange={handleInputChange}
-                placeholder="Confirm your password"
-                required
-                autoComplete="new-password"
-                disabled={loading}
-              />
-              <button
-                type="button"
-                className="register-password-toggle"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                disabled={loading}
-                aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
-              >
-                {showConfirmPassword ? '👁️' : '👁️‍🗨️'}
-              </button>
-            </div>
-          </div>
-
-
-          <div className="register-actions">
-            <button
-              type="submit"
-              className="register-button register-button--primary"
+          <div className="form-group">
+            <label htmlFor="password">Password:</label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
               disabled={loading}
-            >
-              {loading ? 'Creating Account...' : 'Create Account'}
-            </button>
+            />
           </div>
+
+          <div className="form-group">
+            <label htmlFor="confirmPassword">Confirm Password:</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              disabled={loading}
+            />
+          </div>
+
+          <button type="submit" disabled={loading} className="register-button">
+            {loading ? 'Creating Account...' : 'Register'}
+          </button>
         </form>
 
-        <div className="register-footer">
+        <div className="register-links">
           <p>
-            Already have an account?{' '}
-            <Link to="/login" className="register-login-link">
-              Sign in here
-            </Link>
+            Already have an account? <Link to="/login">Login here</Link>
           </p>
         </div>
       </div>
