@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Link, useOutletContext } from 'react-router-dom';
+import { Link, useNavigate, useOutletContext } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 
 export default function AllEvents() {
   const { user, appUser } = useOutletContext();
+  const navigate = useNavigate();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -143,8 +144,7 @@ export default function AllEvents() {
   };
 
   const handleAddEvent = () => {
-    // This would navigate to add event page when implemented
-    console.log('Add event functionality to be implemented');
+    navigate('/add-event');
   };
 
   const handleDeleteEvent = (eventId) => {
@@ -164,8 +164,8 @@ export default function AllEvents() {
     <div className="all-events-page">
       <div className="events-header">
         <h1>All Events</h1>
-        {appUser?.is_commissioner && (
-          <div className="commissioner-actions">
+        {appUser && (
+          <div className="user-actions">
             <button onClick={handleAddEvent} className="add-event-button">
               Add Event
             </button>
@@ -187,7 +187,7 @@ export default function AllEvents() {
                     {event.event_name}
                   </Link>
                 </h2>
-                {appUser?.is_commissioner && (
+                {appUser && (
                   <button
                     onClick={() => handleDeleteEvent(event.eventId)}
                     className="delete-event-button"

@@ -46,8 +46,7 @@ export default function Register() {
           .insert([{
             auth_user_id: authData.user.id,
             username: username,
-            slogan: '',
-            is_commissioner: false
+            slogan: ''
           }]);
 
         if (profileError) {

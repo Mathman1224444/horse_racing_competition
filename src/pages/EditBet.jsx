@@ -28,15 +28,7 @@ export default function EditBet() {
   const [events, setEvents] = useState([]);
   const [races, setRaces] = useState([]);
 
-  // Check if user is commissioner
-  if (!appUser?.is_commissioner) {
-    return (
-      <div className="error">
-        <h1>Access Denied</h1>
-        <p>This page is only accessible to Commissioners.</p>
-      </div>
-    );
-  }
+  // All users can access this page
 
   useEffect(() => {
     loadInitialData();

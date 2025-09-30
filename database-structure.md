@@ -1,9 +1,16 @@
-# Player
+# Authentication & User Management
 
+## auth.users (Supabase built-in table)
+This is Supabase's built-in authentication table that handles user login, passwords, email verification, etc.
+Key fields: id (UUID), email, created_at, last_sign_in_at
+
+## app_users (Application user profile table)
 playerId (primary key)
+auth_user_id (foreign key to auth.users.id)
 username (varchar(16))
 slogan (varchar(100))
-is_commissioner (boolean)
+
+Note: This table links Supabase authentication with application-specific user data. The playerId serves as the primary key for all user references throughout the application.
 
 # Event
 eventId (primary key)

@@ -5,10 +5,19 @@ import ProtectedRoute from './components/ProtectedRoute.jsx';
 // Page Components
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
-import Dashboard from './pages/Dashboard.jsx';
-import EventPage from './pages/EventPage.jsx';
-import RacePage from './pages/RacePage.jsx';
-import CommissionerPage from './pages/CommissionerPage.jsx';
+import ForgotPassword from './pages/ForgotPassword.jsx';
+import PasswordReset from './pages/PasswordReset.jsx';
+import AllEvents from './pages/AllEvents.jsx';
+import Event from './pages/Event.jsx';
+import Race from './pages/Race.jsx';
+import MakeBet from './pages/MakeBet.jsx';
+import Account from './pages/Account.jsx';
+import AddEvent from './pages/AddEvent.jsx';
+import AddRace from './pages/AddRace.jsx';
+import EditRace from './pages/EditRace.jsx';
+import EditRaceResults from './pages/EditRaceResults.jsx';
+import EditBet from './pages/EditBet.jsx';
+import AddScratch from './pages/AddScratch.jsx';
 import NotFound from './pages/NotFound.jsx';
 import ErrorPage from './pages/ErrorPage.jsx';
 
@@ -36,18 +45,10 @@ export const router = createBrowserRouter([
 
       // Protected routes
       {
-        path: 'dashboard',
-        element: (
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        )
-      },
-      {
         path: 'events',
         element: (
           <ProtectedRoute>
-            <div>Events List Page</div>
+            <AllEvents />
           </ProtectedRoute>
         )
       },
@@ -55,15 +56,7 @@ export const router = createBrowserRouter([
         path: 'event/:eventId',
         element: (
           <ProtectedRoute>
-            <EventPage />
-          </ProtectedRoute>
-        )
-      },
-      {
-        path: 'races',
-        element: (
-          <ProtectedRoute>
-            <div>Races List Page</div>
+            <Event />
           </ProtectedRoute>
         )
       },
@@ -71,7 +64,7 @@ export const router = createBrowserRouter([
         path: 'race/:raceId',
         element: (
           <ProtectedRoute>
-            <RacePage />
+            <Race />
           </ProtectedRoute>
         )
       },
@@ -79,15 +72,7 @@ export const router = createBrowserRouter([
         path: 'race/:raceId/bet',
         element: (
           <ProtectedRoute>
-            <RacePage />
-          </ProtectedRoute>
-        )
-      },
-      {
-        path: 'race/:raceId/results',
-        element: (
-          <ProtectedRoute>
-            <RacePage />
+            <MakeBet />
           </ProtectedRoute>
         )
       },
@@ -97,51 +82,57 @@ export const router = createBrowserRouter([
         path: 'account',
         element: (
           <ProtectedRoute>
-            <div>Account Settings Page</div>
-          </ProtectedRoute>
-        )
-      },
-      {
-        path: 'bets',
-        element: (
-          <ProtectedRoute>
-            <div>User Bets History Page</div>
+            <Account />
           </ProtectedRoute>
         )
       },
 
       // Commissioner routes
       {
-        path: 'commissioner',
+        path: 'add-event',
         element: (
           <ProtectedRoute>
-            <CommissionerPage />
-          </ProtectedRoute>
-        )
-      },
-
-      // Admin routes
-      {
-        path: 'admin',
-        element: (
-          <ProtectedRoute requireAdmin={true}>
-            <div>Admin Dashboard</div>
+            <AddEvent />
           </ProtectedRoute>
         )
       },
       {
-        path: 'admin/races',
+        path: 'add-race',
         element: (
-          <ProtectedRoute requireAdmin={true}>
-            <div>Admin Race Management</div>
+          <ProtectedRoute>
+            <AddRace />
           </ProtectedRoute>
         )
       },
       {
-        path: 'admin/users',
+        path: 'edit-race',
         element: (
-          <ProtectedRoute requireAdmin={true}>
-            <div>Admin User Management</div>
+          <ProtectedRoute>
+            <EditRace />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: 'edit-race-results',
+        element: (
+          <ProtectedRoute>
+            <EditRaceResults />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: 'edit-bet',
+        element: (
+          <ProtectedRoute>
+            <EditBet />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: 'add-scratch',
+        element: (
+          <ProtectedRoute>
+            <AddScratch />
           </ProtectedRoute>
         )
       },
@@ -149,11 +140,11 @@ export const router = createBrowserRouter([
       // Utility routes
       {
         path: 'forgot-password',
-        element: <div>Forgot Password Page</div>
+        element: <ForgotPassword />
       },
       {
         path: 'reset-password',
-        element: <div>Reset Password Page</div>
+        element: <PasswordReset />
       },
 
       // 404 catch-all

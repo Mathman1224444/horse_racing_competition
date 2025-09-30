@@ -11,7 +11,9 @@ export default function App() {
   const location = useLocation();
 
   const loadAppUser = async (authUser) => {
+    console.log('Loading app user for:', authUser?.id);
     if (!authUser) {
+      console.log('No auth user, setting app user to null');
       setAppUser(null);
       return;
     }
@@ -23,10 +25,24 @@ export default function App() {
         .eq('auth_user_id', authUser.id)
         .single();
 
+      console.log('App user query result:', { data, error });
+
       if (error) {
         console.error('Error loading app user:', error);
-        setAppUser(null);
+        // If app_users table doesn't exist yet, create a temporary user object
+        if (error.code === 'PGRST116' || error.message?.includes('relation "app_users" does not exist')) {
+          console.log('app_users table not found, using temporary user');
+          setAppUser({
+            playerId: 1,
+            auth_user_id: authUser.id,
+            username: authUser.email?.split('@')[0] || 'temp_user',
+            slogan: ''
+          });
+        } else {
+          setAppUser(null);
+        }
       } else {
+        console.log('Setting app user:', data);
         setAppUser(data);
       }
     } catch (err) {
@@ -36,23 +52,14 @@ export default function App() {
   };
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      await loadAppUser(session?.user);
+    console.log('App useEffect running');
+    // Simplified initialization - bypass Supabase for now
+    setTimeout(() => {
+      console.log('Setting loading to false');
       setLoading(false);
-    });
-
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setUser(session?.user ?? null);
-      await loadAppUser(session?.user);
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
+      setUser(null); // No user initially
+      setAppUser(null);
+    }, 1000);
   }, []);
 
   // Don't show navbar on login/register pages

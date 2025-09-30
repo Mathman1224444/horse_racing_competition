@@ -168,16 +168,6 @@ export default function Account() {
               />
             </div>
 
-            <div className="form-group">
-              <label>Commissioner Status:</label>
-              <input
-                type="text"
-                value={appUser.is_commissioner ? 'Yes' : 'No'}
-                disabled
-                className="readonly-field"
-              />
-              <small>Commissioner status can only be changed by an administrator</small>
-            </div>
 
             <button type="submit" disabled={loading} className="update-profile-button">
               {loading ? 'Updating...' : 'Update Profile'}

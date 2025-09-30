@@ -18,15 +18,7 @@ export default function AddScratch() {
   const [success, setSuccess] = useState('');
   const [affectedBetsCount, setAffectedBetsCount] = useState(0);
 
-  // Check if user is commissioner
-  if (!appUser?.is_commissioner) {
-    return (
-      <div className="error">
-        <h1>Access Denied</h1>
-        <p>This page is only accessible to Commissioners.</p>
-      </div>
-    );
-  }
+  // All users can access this page
 
   useEffect(() => {
     loadEvents();

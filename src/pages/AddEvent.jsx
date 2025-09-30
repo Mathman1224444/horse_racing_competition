@@ -34,15 +34,7 @@ export default function AddEvent() {
     min_pick_6_bet: ''
   });
 
-  // Check if user is commissioner
-  if (!appUser?.is_commissioner) {
-    return (
-      <div className="error">
-        <h1>Access Denied</h1>
-        <p>This page is only accessible to Commissioners.</p>
-      </div>
-    );
-  }
+  // All users can access this page
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;

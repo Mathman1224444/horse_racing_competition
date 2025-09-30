@@ -27,7 +27,7 @@ Users should only see a given event if there is an Entrant record that is associ
 The event_name should contain a hyperlink that directs users to the 'Event' page for that particular event
 The last race section should contain a hyperlink that directs users to the 'Race' page for the most recently resolved race in that event
 The next race section should contain a hyperlink that directs users to the 'Race' page for the next race in that event
-The Commissioner user (identified by the user's is_commissioner boolean field) should additionally see buttons for adding an event and deleting an event.
+All authenticated users should see buttons for adding an event and deleting an event.
 
 # Event
 Users should be able to see an overview of the details of a given event. The page should be divided into sections.
@@ -56,19 +56,19 @@ There should a button at the bottom for the user to submit the bet. After submit
 Users should be able to change their username, reset their password, and change their slogan.
 
 # Add Event
-**Commissioner only.** Allows the Commissioner to create a new event. The page should have a form with all the fields from the Event table including event_name, location, date, num_races, wallets (event_wallet_per_player, race_wallet_per_player), prize amounts (first_prize, second_prize, third_prize), betting rules (can_rebet_winnings, can_bet_future_race, min/max_bets_per_race), and minimum bet amounts for each bet type. After successful creation, the Commissioner should be redirected to the Event page for the newly created event.
+Allows any user to create a new event. The page should have a form with all the fields from the Event table including event_name, location, date, num_races, wallets (event_wallet_per_player, race_wallet_per_player), prize amounts (first_prize, second_prize, third_prize), betting rules (can_rebet_winnings, can_bet_future_race, min/max_bets_per_race), and minimum bet amounts for each bet type. After successful creation, the user should be redirected to the Event page for the newly created event.
 
 # Add Race
-**Commissioner only.** Allows the Commissioner to add a new race to an existing event. The page should display a dropdown to select the event, then a form to input race_number, post_time, and num_horses. The race_number should auto-increment based on existing races in the selected event. When the race is created, a corresponding Race Results record should also be automatically created with only the race_resultsId and raceId populated (all other fields left blank/null). After successful creation, the Commissioner should be redirected to the Race page for the newly created race.
+Allows any user to add a new race to an existing event. The page should display a dropdown to select the event, then a form to input race_number, post_time, and num_horses. The race_number should auto-increment based on existing races in the selected event. When the race is created, a corresponding Race Results record should also be automatically created with only the race_resultsId and raceId populated (all other fields left blank/null). After successful creation, the user should be redirected to the Race page for the newly created race.
 
 # Edit Race
-**Commissioner only.** Allows the Commissioner to edit an existing race's details. The page should display dropdowns to select the event and then the race to edit. The form should allow editing of post_time, num_horses, is_open_for_bets, and is_resolved fields. There should be a warning when marking a race as resolved that this will trigger payout calculations. After saving changes, the Commissioner should remain on the same page with a success message.
+Allows any user to edit an existing race's details. The page should display dropdowns to select the event and then the race to edit. The form should allow editing of post_time, num_horses, is_open_for_bets, and is_resolved fields. There should be a warning when marking a race as resolved that this will trigger payout calculations. After saving changes, the user should remain on the same page with a success message.
 
 # Edit Race Results
-**Commissioner only.** Allows the Commissioner to enter or modify the results for a completed race. The page should have dropdowns to select the event and race. The form should include fields for the finishing order (first_horse, second_horse, third_horse, fourth_horse) and all payout multipliers (win/place/show multipliers for each placed horse, exacta_mult, trifecta_mult, superfecta_mult, and pick multipliers). After saving, all associated bets should be automatically resolved and winnings calculated.
+Allows any user to enter or modify the results for a completed race. The page should have dropdowns to select the event and race. The form should include fields for the finishing order (first_horse, second_horse, third_horse, fourth_horse) and all payout multipliers (win/place/show multipliers for each placed horse, exacta_mult, trifecta_mult, superfecta_mult, and pick multipliers). After saving, all associated bets should be automatically resolved and winnings calculated.
 
 # Edit Bet
-**Commissioner only.** Allows the Commissioner to modify or invalidate a player's bet. The page should have search functionality to find bets by player username, event, or race. The Commissioner should be able to change the bet's resolution status, mark it as invalid with a reason, or adjust the bet_winnings amount. This is primarily for correcting errors or handling disputes. Changes should be logged for audit purposes.
+Allows any user to modify or invalidate a player's bet. The page should have search functionality to find bets by player username, event, or race. The user should be able to change the bet's resolution status, mark it as invalid with a reason, or adjust the bet_winnings amount. This is primarily for correcting errors or handling disputes. Changes should be logged for audit purposes.
 
 # Add Scratch
-**Commissioner only.** Allows the Commissioner to scratch a horse from a race. The page should have dropdowns to select the event and race, then input the horse_num to scratch. There should be a list showing already scratched horses for the selected race. After adding a scratch, any affected bets should be automatically marked as 'Scratched' in their resolution field. The Commissioner should see a confirmation of how many bets were affected.
+Allows any user to scratch a horse from a race. The page should have dropdowns to select the event and race, then input the horse_num to scratch. There should be a list showing already scratched horses for the selected race. After adding a scratch, any affected bets should be automatically marked as 'Scratched' in their resolution field. The user should see a confirmation of how many bets were affected.
