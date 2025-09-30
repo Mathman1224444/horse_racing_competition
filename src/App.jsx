@@ -29,37 +29,82 @@ export default function App() {
 
       if (error) {
         console.error('Error loading app user:', error);
-        // If app_users table doesn't exist yet, create a temporary user object
-        if (error.code === 'PGRST116' || error.message?.includes('relation "app_users" does not exist')) {
-          console.log('app_users table not found, using temporary user');
+        // If app_users table doesn't exist or no record found, create a temporary user object
+        if (error.code === 'PGRST116' ||
+            error.message?.includes('relation "app_users" does not exist') ||
+            error.message?.includes('No rows returned')) {
+          console.log('Creating temporary user object');
           setAppUser({
-            playerId: 1,
+            playerId: Math.floor(Math.random() * 1000000), // Random temp ID
             auth_user_id: authUser.id,
             username: authUser.email?.split('@')[0] || 'temp_user',
             slogan: ''
           });
         } else {
+          console.log('Setting app user to null due to error');
           setAppUser(null);
         }
       } else {
-        console.log('Setting app user:', data);
+        console.log('Setting app user from database:', data);
         setAppUser(data);
       }
     } catch (err) {
-      console.error('Error loading app user:', err);
-      setAppUser(null);
+      console.error('Unexpected error loading app user:', err);
+      // Create temporary user as fallback
+      setAppUser({
+        playerId: Math.floor(Math.random() * 1000000),
+        auth_user_id: authUser.id,
+        username: authUser.email?.split('@')[0] || 'temp_user',
+        slogan: ''
+      });
     }
   };
 
   useEffect(() => {
-    console.log('App useEffect running');
-    // Simplified initialization - bypass Supabase for now
-    setTimeout(() => {
-      console.log('Setting loading to false');
-      setLoading(false);
-      setUser(null); // No user initially
-      setAppUser(null);
-    }, 1000);
+    const initializeAuth = async () => {
+      try {
+        console.log('Initializing authentication...');
+
+        // Get initial session
+        const { data: { session }, error } = await supabase.auth.getSession();
+        console.log('Session check result:', { session, error });
+
+        if (error) {
+          console.error('Session error:', error);
+        }
+
+        setUser(session?.user ?? null);
+
+        if (session?.user) {
+          await loadAppUser(session.user);
+        } else {
+          setAppUser(null);
+        }
+
+        setLoading(false);
+      } catch (err) {
+        console.error('Auth initialization failed:', err);
+        setLoading(false);
+      }
+    };
+
+    initializeAuth();
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      console.log('Auth state change:', _event, session);
+      setUser(session?.user ?? null);
+
+      if (session?.user) {
+        await loadAppUser(session.user);
+      } else {
+        setAppUser(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   // Don't show navbar on login/register pages
